@@ -7,7 +7,7 @@ def degree_centrality_node(G, node):
     return G.degree(node)
 
 
-def num_of_sortest_paths_containing_node(G, node, paths):
+def num_of_sortest_paths_containing_node(node, paths):
     sum = 0
     for p in paths:
         if node in p:
@@ -26,7 +26,7 @@ def betweenness_centrality_node(G, node):
             #     create lists of the paths
             shortest_paths = [p for p in nx.all_shortest_paths(G, source=start_node, target=end_node)]
             # by the formula add the relative number of listse containing node to the number of lists
-            summ += num_of_sortest_paths_containing_node(G, node, shortest_paths) / len(shortest_paths)
+            summ += num_of_sortest_paths_containing_node( node, shortest_paths) / len(shortest_paths)
     # we counted twice so divide
     return summ / 2
 

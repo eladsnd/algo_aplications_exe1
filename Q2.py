@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+from networkx import gnp_random_graph
 
 
 def degree_centrality_node(G, node):
@@ -11,7 +12,7 @@ def num_of_sortest_paths_containing_node(node, paths):
     sum = 0
     for p in paths:
         if node in p:
-            sum+=1
+            sum += 1
     return sum
 
 
@@ -26,7 +27,7 @@ def betweenness_centrality_node(G, node):
             #     create lists of the paths
             shortest_paths = [p for p in nx.all_shortest_paths(G, source=start_node, target=end_node)]
             # by the formula add the relative number of listse containing node to the number of lists
-            summ += num_of_sortest_paths_containing_node( node, shortest_paths) / len(shortest_paths)
+            summ += num_of_sortest_paths_containing_node(node, shortest_paths) / len(shortest_paths)
     # we counted twice so divide
     return summ / 2
 
@@ -42,7 +43,7 @@ def closeness_centrality_node(G, node):
         return 0
 
 
-if __name__ == "__main__":
+def Q2_a():
     G = nx.karate_club_graph()
     G = nx.Graph()
     G.add_edges_from([(0, 1)
@@ -60,3 +61,63 @@ if __name__ == "__main__":
     print(nx.closeness_centrality(G))
     print(nx.betweenness_centrality(G))
     print(nx.degree_centrality(G))
+
+
+def max_Closness(G, flag):
+    map = {}
+    for node in G.nodes():
+        map[node] = closeness_centrality_node(G, node)
+    if flag == 1:
+        output = sorted(map, key=map.__getitem__, reverse=True)
+        return output[0:3]
+    else:
+        return dict(sorted(map.items(), key=lambda item: item[1], reverse=True))
+
+
+def max_Betweeness(G, flag):
+    map = {}
+    for node in G.nodes():
+        map[node] = betweenness_centrality_node(G, node)
+    if flag == 1:
+        output = sorted(map, key=map.__getitem__, reverse=True)
+        return output[0:3]
+    else:
+        return dict(sorted(map.items(), key=lambda item: item[1], reverse=True))
+
+
+def max_Degree(G, flag):
+    map = {}
+    for node in G.nodes():
+        map[node] = degree_centrality_node(G, node)
+    if flag == 1:
+        output = sorted(map, key=map.__getitem__, reverse=True)
+        return output[0:3]
+    else:
+        return dict(sorted(map.items(), key=lambda item: item[1], reverse=True))
+
+
+def Q2_b(G):
+    print("top nodes by Degree : " + str(max_Degree(G, 1)))
+    print("top nodes by Betweenes : " + str(max_Betweeness(G, 1)))
+    print("top nodes by Closeness : " + str(max_Closness(G, 1)))
+
+    # print(max_3_Closness(G, 2))
+
+
+def Q2_c(G):
+    Cb = max_Betweeness(G, 2)
+    Cc = max_Closness(G, 2)
+    Cd = max_Degree(G, 2)
+    plt.figure("closeness_centrality", figsize=(20, 10))
+    nx.draw(G, with_labels=True, node_color="teal", font_size=15, node_size=[v * 55000 for v in Cc.values()])
+    plt.figure("degree_centrality", figsize=(20, 10))
+    nx.draw(G, with_labels=True, node_color="skyblue", font_size=15, node_size=[v * 500 for v in Cd.values()])
+    plt.figure("betweenness_centrality", figsize=(20, 10))
+    nx.draw(G, with_labels=True, node_color="dodgerblue", font_size=15, node_size=[v * 500 for v in Cb.values()])
+    plt.show()
+
+
+if __name__ == "__main__":
+    G = gnp_random_graph(22, p=0.3)
+    Q2_b(G)
+    Q2_c(G)

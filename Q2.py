@@ -43,24 +43,24 @@ def closeness_centrality_node(G, node):
         return 0
 
 
-def Q2_a():
-    G = nx.karate_club_graph()
-    G = nx.Graph()
-    G.add_edges_from([(0, 1)
-                         , (0, 2)
-                         , (0, 3)
-                         , (0, 4)
-                         , (0, 5)
-                         , (0, 6)
-                      ])
-    print(closeness_centrality_node(G, 0))
-    print(betweenness_centrality_node(G, 0))
-    print(degree_centrality_node(G, 0))
-
-    print("test_case")
-    print(nx.closeness_centrality(G))
-    print(nx.betweenness_centrality(G))
-    print(nx.degree_centrality(G))
+# def Q2_a():
+#     G = nx.karate_club_graph()
+#     G = nx.Graph()
+#     G.add_edges_from([(0, 1)
+#                          , (0, 2)
+#                          , (0, 3)
+#                          , (0, 4)
+#                          , (0, 5)
+#                          , (0, 6)
+#                       ])
+#     print(closeness_centrality_node(G, 0))
+#     print(betweenness_centrality_node(G, 0))
+#     print(degree_centrality_node(G, 0))
+#
+#     print("test_case")
+#     print(nx.closeness_centrality(G))
+#     print(nx.betweenness_centrality(G))
+#     print(nx.degree_centrality(G))
 
 
 def max_Closness(G, flag):
@@ -100,8 +100,6 @@ def Q2_b(G):
     print("top nodes by Degree : " + str(max_Degree(G, 1)))
     print("top nodes by Betweenes : " + str(max_Betweeness(G, 1)))
     print("top nodes by Closeness : " + str(max_Closness(G, 1)))
-
-    # print(max_3_Closness(G, 2))
 
 
 def Q2_c(G):

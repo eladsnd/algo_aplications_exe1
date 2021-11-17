@@ -1,22 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-import numpy as np
-from networkx import gnp_random_graph
-
-"""
-1.remove negative edges  
-    * find connected components 
-        :return as dict  #component : list of nodes
-2. ceck if there is a negative edge in a CC
-    * yes - unbalanced
-    *no -continue
-3. build the CC graph 
-    * 
 
 
-"""
-
-
+# get G - graph and return G's connected component
 def find_connected_components(G):
     CC_map = {}
     x = [c for c in nx.connected_components(G)]
@@ -25,7 +11,10 @@ def find_connected_components(G):
     return CC_map
 
 
-def inside_cc(G,CC_map):
+# get G - graph and CC_map - G's connected component
+# return False - if G's connected component has a "-" edge
+# True otherwise
+def inside_cc(G, CC_map):
     for c in CC_map.keys():
         g = G.subgraph(CC_map[c])
         gsmall = [(u, v) for (u, v, d) in g.edges(data=True) if d['label'] == '-']
@@ -48,7 +37,7 @@ def calculate_CC_graph(G, CC):
     CCG.add_nodes_from(list(CC.keys()))
     for i in range(CCG.number_of_nodes()):
         for j in range(i + 1, CCG.number_of_nodes()):
-            if check_edge(G,CC, i, j):
+            if check_edge(G, CC, i, j):
                 CCG.add_edge(i, j)
     return CCG
 
@@ -60,36 +49,66 @@ def Q3_a(G):
 
     CC_map = find_connected_components(G_t)
 
-    if not inside_cc(G,CC_map):
+    if not inside_cc(G, CC_map):
         return False
 
     CCG = calculate_CC_graph(G, CC_map)
     return nx.is_bipartite(CCG)
 
 
-
-if __name__ == "__main__":
+def Q3_b():
     G = nx.Graph()
     # the network is about the show Fate\stay Night and the character relations
+    # the nodes are the main characters , and the edges are the relationships
     # https://en.wikipedia.org/wiki/List_of_Fate/stay_night_characters
-    G.add_node('Shirou Emiya(saber oner)', pos=(2, 10))
-    G.add_node('Rin Tohsaka(archer oner)', pos=(4, 9))
-    G.add_node('Sakura Matou(rider oner)', pos=(0, 13))
-    G.add_node('Illya(buserker oner)', pos=(1.5, 4))
-    G.add_node('Kirei Kotomine(gilgamesh oner)', pos=(4, 4))
-    G.add_node('Sōichirō Kuzuki(caster oner)', pos=(6, 11))
+
+    """
+    ******** explanation of nodes and edges , and splitting the coalition ********
+    
+     the coalitions are :
+     "good guys"
+        Shirou Emiya(saber oner)
+        Rin Tohsaka(archer owner)
+        Sakura Matou(rider owner)
+        Illya(berserker owner)
+     
+     "bad guys"
+        Kirei Kotomine(gilgamesh owner)
+        Sōichirō Kuzuki(caster owner)
+            
+    """
+
+    G.add_node('Shirou Emiya(saber owner)')
+    G.add_node('Rin Tohsaka(archer owner)')
+    G.add_node('Sakura Matou(rider owner)')
+    G.add_node('Illya(berserker owner)')
+    G.add_node('Kirei Kotomine(gilgamesh owner)')
+    G.add_node('Sōichirō Kuzuki(caster owner)')
 
     # Add edges by defining weight and label
-    G.add_edge('Shirou Emiya(saber oner)', 'Rin Tohsaka(archer oner)', weight=1, label='+')
-    G.add_edge('Shirou Emiya(saber oner)', 'Sakura Matou(rider oner)', weight=1, label='+')
-    G.add_edge('Shirou Emiya(saber oner)', 'Illya(buserker oner)', weight=1, label='+')
-    G.add_edge('Shirou Emiya(saber oner)', 'Kirei Kotomine(gilgamesh oner)', weight=1, label='-')
-    G.add_edge('Shirou Emiya(saber oner)', 'Sōichirō Kuzuki(caster oner)', weight=1, label='-')
-    G.add_edge('Rin Tohsaka(archer oner)', 'Illya(buserker oner)', weight=1, label='+')
-    G.add_edge('Kirei Kotomine(gilgamesh oner)', 'Rin Tohsaka(archer oner)', weight=1, label='-')
-    G.add_edge('Kirei Kotomine(gilgamesh oner)', 'Illya(buserker oner)', weight=1, label='-')
-    G.add_edge('Kirei Kotomine(gilgamesh oner)', 'Sōichirō Kuzuki(caster oner)', weight=1, label='+')
+    G.add_edge('Shirou Emiya(saber owner)', 'Rin Tohsaka(archer owner)', weight=1, label='+')
+    G.add_edge('Shirou Emiya(saber owner)', 'Sakura Matou(rider owner)', weight=1, label='+')
+    G.add_edge('Shirou Emiya(saber owner)', 'Illya(berserker owner)', weight=1, label='+')
+    G.add_edge('Shirou Emiya(saber owner)', 'Kirei Kotomine(gilgamesh owner)', weight=1, label='-')
+    G.add_edge('Shirou Emiya(saber owner)', 'Sōichirō Kuzuki(caster owner)', weight=1, label='-')
+    G.add_edge('Rin Tohsaka(archer owner)', 'Illya(berserker oner)', weight=1, label='+')
+    G.add_edge('Kirei Kotomine(gilgamesh owner)', 'Rin Tohsaka(archer owner)', weight=1, label='-')
+    G.add_edge('Kirei Kotomine(gilgamesh owner)', 'Illya(berserker owner)', weight=1, label='-')
+    G.add_edge('Kirei Kotomine(gilgamesh owner)', 'Sōichirō Kuzuki(caster owner)', weight=1, label='+')
+    return G
 
+
+def Q3_c(G):
+    pos = nx.spring_layout(G)  # positions for all nodes
+    elarge = [(u, v) for (u, v, d) in G.edges(data=True) if d['label'] == '+']  # solid edge
+    esmall = [(u, v) for (u, v, d) in G.edges(data=True) if d['label'] == '-']
+    nx.draw(G, pos=pos, with_labels=True, node_color="dodgerblue", font_size=15)
+    nx.draw_networkx_edges(G, pos, edgelist=elarge, width=8, alpha=0.5, edge_color='r')
+    nx.draw_networkx_edges(G, pos, edgelist=esmall, width=8, alpha=0.5, edge_color='b')
+
+
+if __name__ == "__main__":
+    G = Q3_b()
     print(Q3_a(G))
-
-
+    Q3_c(G)
+    plt.show()
